@@ -10,6 +10,7 @@ import ProductCarousel from '../components/ProductCarousel'
 import Meta from '../components/Meta'
 import { listProducts } from '../actions/productActions'
 import Collections from '../components/Collections'
+import HeaderCarousel from '../components/HeaderCarousel'
 
 const HomeScreen = ({ match }) => {
   const keyword = match.params.keyword
@@ -29,7 +30,8 @@ const HomeScreen = ({ match }) => {
     <>
       <Meta />
       {!keyword ? (
-        <ProductCarousel />
+        // <ProductCarousel />
+        <HeaderCarousel />
       ) : (
         <Link to='/' className='btn btn-light'>
           Go Back
