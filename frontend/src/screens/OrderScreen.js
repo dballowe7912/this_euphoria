@@ -28,6 +28,7 @@ const OrderScreen = ({ match, history }) => {
 
   const orderDetails = useSelector((state) => state.orderDetails)
   const { order, loading, error } = orderDetails
+  
 
   const orderPay = useSelector((state) => state.orderPay)
   const { loading: loadingPay, success: successPay } = orderPay
@@ -47,7 +48,9 @@ const OrderScreen = ({ match, history }) => {
     order.itemsPrice = addDecimals(
       order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
     )
+    console.log(order.shippingAddress)
   }
+
 
   useEffect(() => {
     if (!userInfo) {
@@ -119,7 +122,7 @@ const OrderScreen = ({ match, history }) => {
      shipping.setDescription("shipping description")
 
      var billTo = new ApiContracts.CustomerAddressType()
-     billTo.setFirstName(order.user.name)
+     billTo.setFirstName('na')
      billTo.setLastName("Johnson")
      billTo.setCompany("Souveniropolis")
      billTo.setAddress("14 Main Street")
@@ -129,13 +132,13 @@ const OrderScreen = ({ match, history }) => {
      billTo.setCountry("USA")
 
      var shipTo = new ApiContracts.CustomerAddressType()
-     shipTo.setFirstName("China")
+     shipTo.setFirstName(order.user.name)
      shipTo.setLastName("Bayles")
      shipTo.setCompany("Thyme for Tea")
-     shipTo.setAddress("12 Main Street")
-     shipTo.setCity("Pecan Springs")
-     shipTo.setState("TX")
-     shipTo.setZip("44628")
+     shipTo.setAddress(order.shippingAddress.ad)
+     shipTo.setCity(order.shippingAddress.city)
+     shipTo.setState(order.shippingAddress.state)
+     shipTo.setZip(order.shippingAddress.postalCode)
      shipTo.setCountry("USA")
 
      var lineItem_id1 = new ApiContracts.LineItemType()
@@ -350,7 +353,7 @@ const OrderScreen = ({ match, history }) => {
                 <strong>Address:</strong>
                 {order.shippingAddress.address}, {order.shippingAddress.city}{' '}
                 {order.shippingAddress.postalCode},{' '}
-                {order.shippingAddress.country}
+                {order.shippingAddress.state}
               </p>
               {order.isDelivered ? (
                 <Message variant='success'>
