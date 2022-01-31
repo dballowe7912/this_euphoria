@@ -32,6 +32,13 @@ app.get('/api/config/paypal', (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)
 )
 
+app.get("/api/config/authorizenet", (req, res) =>
+  res.send(process.env.AUTHORIZE_API_LOGIN_ID)
+)
+app.get("/api/config/transaction", (req, res) =>
+  res.send(process.env.AUTHORIZE_TRANSACTION_KEY)
+)
+
 const __dirname = path.resolve()
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
 
