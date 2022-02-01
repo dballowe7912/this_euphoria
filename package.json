@@ -16,6 +16,7 @@
   "author": "Donald Ballowe",
   "license": "MIT",
   "dependencies": {
+    "authorizenet": "^1.0.8",
     "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
     "dotenv": "^8.2.0",
