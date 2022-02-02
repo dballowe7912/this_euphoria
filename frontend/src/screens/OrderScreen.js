@@ -23,6 +23,7 @@ const OrderScreen = ({ match, history }) => {
   const orderId = match.params.id
 
   const [sdkReady, setSdkReady] = useState(false)
+  const [ paymentResonse, setPaymentResponse ] = useState({})
 
   const dispatch = useDispatch()
 
