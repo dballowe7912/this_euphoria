@@ -92,9 +92,10 @@ const OrderScreen = ({ match, history }) => {
 
   const authData = {
     apiLoginID: process.env.AUTHORIZE_API_LOGIN_ID,
-    clientKey: process.env.AUTHORIZE_TRANSACTION_KEY,
+    clientKey: process.env.AUTHORIZE_API_CLIENT_KEY,
   }
 
+  
   
 
   const handleSubmit = (response) => {
