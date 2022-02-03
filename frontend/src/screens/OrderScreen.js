@@ -24,6 +24,7 @@ const OrderScreen = ({ match, history }) => {
 
   const [sdkReady, setSdkReady] = useState(false)
   const [ paymentResonse, setPaymentResponse ] = useState({})
+  const [ authData, setAuthData ] = useState({})
 
   const dispatch = useDispatch()
 
@@ -50,7 +51,20 @@ const OrderScreen = ({ match, history }) => {
     )
   }
 
+
   useEffect(() => {
+        const addAuth = async () => {
+            const {data: apiLoginID} = await axios.get("/api/config/authorizenet")
+            const {data: clientKey} = await axios.get("/api/config/client")
+            authData.apiLoginID = apiLoginID
+            authData.clientKey = clientKey
+            console.log(authData)
+            setAuthData(authData)
+          }
+        
+
+        addAuth()
+
     if (!userInfo) {
       history.push('/login')
     }
@@ -79,7 +93,7 @@ const OrderScreen = ({ match, history }) => {
         setSdkReady(true)
       }
     }
-  }, [dispatch, orderId, successPay, successDeliver, order])
+  }, [dispatch, orderId, successPay, successDeliver, order, authData])
 
   const successPaymentHandler = (paymentResult) => {
     console.log(paymentResult)
@@ -90,10 +104,7 @@ const OrderScreen = ({ match, history }) => {
     dispatch(deliverOrder(order))
   }
 
-  const authData = {
-    apiLoginID: process.env.AUTHORIZE_API_LOGIN_ID,
-    clientKey: process.env.AUTHORIZE_API_CLIENT_KEY,
-  }
+  
 
   
   
@@ -223,6 +234,7 @@ const OrderScreen = ({ match, history }) => {
                       authData={authData}
                       onSubmit={handleSubmit}
                     />
+
                   )}
                 </ListGroup.Item>
               )}

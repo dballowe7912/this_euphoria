@@ -35,8 +35,8 @@ app.get('/api/config/paypal', (req, res) =>
 app.get("/api/config/authorizenet", (req, res) =>
   res.send(process.env.AUTHORIZE_API_LOGIN_ID)
 )
-app.get("/api/config/transaction", (req, res) =>
-  res.send(process.env.AUTHORIZE_TRANSACTION_KEY)
+app.get("/api/config/client", (req, res) =>
+  res.send(process.env.AUTHORIZE_API_CLIENT_KEY)
 )
 
 const __dirname = path.resolve()

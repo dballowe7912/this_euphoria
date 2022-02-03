@@ -11,7 +11,7 @@ const Collections = () => {
           <Col key={collection.name} sm={12} md={6} lg={4} xl={3}>
             <Card className="my-3 py-3">
               <Link to={`collection/${collection._id}`}>
-                <Card.Img src={collection.image} variant="top"  fluid/>
+                <Card.Img src={collection.image} variant="top"/>
               </Link>
 
               <Card.Body>
