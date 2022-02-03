@@ -16,8 +16,8 @@ import {
   ORDER_PAY_RESET,
   ORDER_DELIVER_RESET,
 } from '../constants/orderConstants'
-
-
+import dotenv from 'dotenv'
+dotenv.config()
 
 const OrderScreen = ({ match, history }) => {
   const orderId = match.params.id
@@ -91,10 +91,11 @@ const OrderScreen = ({ match, history }) => {
   }
 
   const authData = {
-    apiLoginID: "9pHT4j2X",
-    clientKey:
-      "9D2Y85VxWEg3J5CA58EggKavP2prFXDMVC95tasEM85hqrJXPcwe4Cg62fL8frVc",
+    apiLoginID: process.env.AUTHORIZE_API_LOGIN_ID,
+    clientKey: process.env.AUTHORIZE_TRANSACTION_KEY,
   }
+
+  
 
   const handleSubmit = (response) => {
     console.log(response)
