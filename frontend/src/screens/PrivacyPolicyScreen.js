@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-
+import { Link } from "react-router-dom"
 
 function PrivacyPolicyScreen() {
   useEffect(() => {
@@ -104,9 +104,9 @@ function PrivacyPolicyScreen() {
           <p>
             <strong>Website</strong> refers to Euphoria Botanical, accessible at{" "}
             {""}
-            <a href="http://euphoriabotanical.com">
+            <Link to="http://euphoriabotanical.com">
               <span>http://euphoriabotanical.com</span>
-            </a>
+            </Link>
             .
           </p>
         </li>
@@ -214,13 +214,12 @@ function PrivacyPolicyScreen() {
           used for Browser Cookies. For more information on how You can delete
           Flash Cookies, please read &quot;Where can I change the settings for
           disabling, or deleting local shared objects?&quot; available
-          <a
-            href="https://helpx.adobe.com/flash-player/kb/disable-local-shared-objects-flash.html#main_Where_can_I_change_the_settings_for_disabling__or_deleting_local_shared_objects_"
+          <Link
+            to="https://helpx.adobe.com/flash-player/kb/disable-local-shared-objects-flash.html#main_Where_can_I_change_the_settings_for_disabling__or_deleting_local_shared_objects_"
             rel="external nofollow noopener"
-            target="_blank"
           >
             here
-          </a>
+          </Link>
         </li>
         <li>
           <strong>Web Beacons.</strong> Certain sections of our Service and our
@@ -237,12 +236,11 @@ function PrivacyPolicyScreen() {
         Persistent Cookies remain on Your personal computer or mobile device
         when You go offline, while Session Cookies are deleted as soon as You
         close Your web browser. You can learn more about cookies here:
-        <a
-          href="https://www.termsfeed.com/privacy-policy-generator/#faq-8"
-          target="_blank"
+        <Link
+          to="https://www.termsfeed.com/privacy-policy-generator/#faq-8"
         >
           Cookies by TermsFeed Generator
-        </a>
+        </Link>
         .
       </p>
       <p>
