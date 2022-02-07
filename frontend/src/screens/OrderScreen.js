@@ -77,6 +77,7 @@ const OrderScreen = ({ match, history }) => {
 
   useEffect(() => {
         
+    console.log(order)
 
     addAuth()
 
@@ -187,24 +188,13 @@ const OrderScreen = ({ match, history }) => {
       })
     }
 
-    // var lineItem_id2 = new ApiContracts.LineItemType()
-    // lineItem_id2.setItemId("2")
-    // lineItem_id2.setName("vase2")
-    // lineItem_id2.setDescription("cannes logo2")
-    // lineItem_id2.setQuantity("28")
-    // lineItem_id2.setUnitPrice("25.00")
-
-    // var lineItemList = []
-    // lineItemList.push(lineItem_id1)
-    // lineItemList.push(lineItem_id2)
-
     var lineItems = new ApiContracts.ArrayOfLineItem()
     lineItems.setLineItem(lineItemList)
 
     var transactionRequestType = new ApiContracts.TransactionRequestType();
     transactionRequestType.setTransactionType(ApiContracts.TransactionTypeEnum.AUTHCAPTURETRANSACTION);
     transactionRequestType.setPayment(paymentType);
-    transactionRequestType.setAmount('100.00');
+    transactionRequestType.setAmount(order.totalPrice);
     transactionRequestType.setLineItems(lineItems);
     // transactionRequestType.setUserFields(userFields);
     // transactionRequestType.setOrder(orderDetails);
