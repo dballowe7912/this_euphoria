@@ -38,6 +38,9 @@ app.get("/api/config/authorizenet", (req, res) =>
 app.get("/api/config/client", (req, res) =>
   res.send(process.env.AUTHORIZE_API_CLIENT_KEY)
 )
+app.get("/api/config/transaction", (req, res) =>
+  res.send(process.env.AUTHORIZE_TRANSACTION_KEY)
+)
 
 const __dirname = path.resolve()
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')))

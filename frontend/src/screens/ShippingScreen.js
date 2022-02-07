@@ -9,16 +9,20 @@ const ShippingScreen = ({ history }) => {
   const cart = useSelector((state) => state.cart)
   const { shippingAddress } = cart
 
+  const [ firstName, setFirstName ] = useState(shippingAddress.firstName)
+  const [ lastName, setLastName ] = useState(shippingAddress.lastName)
   const [address, setAddress] = useState(shippingAddress.address)
   const [city, setCity] = useState(shippingAddress.city)
   const [postalCode, setPostalCode] = useState(shippingAddress.postalCode)
   const [state, setState] = useState(shippingAddress.state)
 
+  console.log(firstName)
+
   const dispatch = useDispatch()
 
   const submitHandler = (e) => {
     e.preventDefault()
-    dispatch(saveShippingAddress({ address, city, postalCode, state }))
+    dispatch(saveShippingAddress({ firstName, lastName, address, city, postalCode, state }))
     history.push('/payment')
   }
 
@@ -27,6 +31,29 @@ const ShippingScreen = ({ history }) => {
       <CheckoutSteps step1 step2 />
       <h1>Shipping</h1>
       <Form onSubmit={submitHandler}>
+
+        <Form.Group controlId='firstName'>
+          <Form.Label>First Name</Form.Label>
+          <Form.Control
+            type='text'
+            placeholder='Enter first name'
+            value={firstName}
+            required
+            onChange={(e) => setFirstName(e.target.value)}
+          ></Form.Control>
+        </Form.Group>
+
+        <Form.Group controlId='lastName'>
+          <Form.Label>Last Name</Form.Label>
+          <Form.Control
+            type='text'
+            placeholder='Enter last name'
+            value={lastName}
+            required
+            onChange={(e) => setLastName(e.target.value)}
+          ></Form.Control>
+        </Form.Group>
+
         <Form.Group controlId='address'>
           <Form.Label>Address</Form.Label>
           <Form.Control

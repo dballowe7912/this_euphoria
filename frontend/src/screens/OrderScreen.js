@@ -33,6 +33,18 @@ const OrderScreen = ({ match, history }) => {
   const orderDetails = useSelector((state) => state.orderDetails)
   const { order, loading, error } = orderDetails
 
+  // if (order) {
+  //   console.log(orderDetails)
+  //   const orderList = order.orderItems.map((item) => {
+      
+  //   console.log(item)
+  //   })
+    // console.log(order.shippingAddress.address)       // street
+    // console.log(order.shippingAddress.city)          // city
+    // console.log(order.shippingAddress.state)         // state
+    // console.log(order.shippingAddress.postalCode)    // zip
+  // }
+
   const orderPay = useSelector((state) => state.orderPay)
   const { loading: loadingPay, success: successPay } = orderPay
 
@@ -53,18 +65,20 @@ const OrderScreen = ({ match, history }) => {
     )
   }
 
+  const addAuth = async () => {
+      const {data: apiLoginID} = await axios.get("/api/config/authorizenet")
+      const {data: clientKey} = await axios.get("/api/config/client")
+      const {data: transactionKey} = await axios.get("/api/config/transaction")
+      authData.apiLoginID = apiLoginID
+      authData.clientKey = clientKey
+      authData.transactionKey = transactionKey
+      setAuthData(authData)
+  }
 
   useEffect(() => {
-        const addAuth = async () => {
-            const {data: apiLoginID} = await axios.get("/api/config/authorizenet")
-            const {data: clientKey} = await axios.get("/api/config/client")
-            authData.apiLoginID = apiLoginID
-            authData.clientKey = clientKey
-            setAuthData(authData)
-        }
         
 
-        addAuth()
+    addAuth()
 
     if (!userInfo) {
       history.push('/login')
@@ -106,26 +120,28 @@ const OrderScreen = ({ match, history }) => {
   }
 
   const handleSubmit = (response) => {
+    if (!authData) {
+      addAuth()
+    }
+
     const merchantAuthenticationType =
     new ApiContracts.MerchantAuthenticationType()
-    merchantAuthenticationType.setName("9pHT4j2X")
-    merchantAuthenticationType.setTransactionKey("8hF243WL2wMvkr8m")
-    console.log(merchantAuthenticationType)
-
+    merchantAuthenticationType.setName(authData.apiLoginID)
+    merchantAuthenticationType.setTransactionKey(authData.transactionKey)
     var opaqueData = response.opaqueData
 
     var paymentType = new ApiContracts.PaymentType()
     paymentType.setOpaqueData(opaqueData)
 
-    var orderDetails = new ApiContracts.OrderType()
-    orderDetails.setInvoiceNumber('1')
-    orderDetails.setDescription("Product Description")
+    // var orderDetails = new ApiContracts.OrderType()
+    // orderDetails.setInvoiceNumber('1')
+    // orderDetails.setDescription("Product Description")
 
     var tax = new ApiContracts.ExtendedAmountType()
 
     // GET TAX FROM ORDER?
-    tax.setAmount("8.25")
-    tax.setName("State Tax")
+    tax.setAmount(order.taxPrice)
+    tax.setName("Sales Tax")
 
     // GET SHIPPING COST?
     var shipping = new ApiContracts.ExtendedAmountType()
@@ -144,35 +160,43 @@ const OrderScreen = ({ match, history }) => {
     billTo.setZip("44628")
     billTo.setCountry("USA")
 
-    // GET SHIPPING INFO
+    // GET SHIPPING INFO -- order.shippingAddress.
     var shipTo = new ApiContracts.CustomerAddressType()
-    shipTo.setFirstName("China")
-    shipTo.setLastName("Bayles")
-    shipTo.setCompany("Thyme for Tea")
-    shipTo.setAddress("12 Main Street")
-    shipTo.setCity("Pecan Springs")
-    shipTo.setState("TX")
-    shipTo.setZip("44628")
+    shipTo.setFirstName(order.shippingAddress.firstName)
+    shipTo.setLastName(order.shippingAddress.lastName)
+    shipTo.setAddress(order.shippingAddress.address)
+    shipTo.setCity(order.shippingAddress.city)
+    shipTo.setState(order.shippingAddress.state)
+    shipTo.setZip(order.shippingAddress.postalCode)
     shipTo.setCountry("USA")
 
     // GET ITEMS DETAILS
-    var lineItem_id1 = new ApiContracts.LineItemType()
-    lineItem_id1.setItemId("1")
-    lineItem_id1.setName("vase")
-    lineItem_id1.setDescription("cannes logo")
-    lineItem_id1.setQuantity("18")
-    lineItem_id1.setUnitPrice(45.0)
+    const { orderItems } = order
+    console.log(orderItems)
 
-    var lineItem_id2 = new ApiContracts.LineItemType()
-    lineItem_id2.setItemId("2")
-    lineItem_id2.setName("vase2")
-    lineItem_id2.setDescription("cannes logo2")
-    lineItem_id2.setQuantity("28")
-    lineItem_id2.setUnitPrice("25.00")
+    if (orderItems) {
+      var lineItemList = []
+      orderItems.forEach((item) => {
+        var lineItem_id1 = new ApiContracts.LineItemType()
+        lineItem_id1.setItemId(item._id)
+        lineItem_id1.setName(item.name.slice(0, 30))
+        // lineItem_id1.setDescription("cannes logo")
+        lineItem_id1.setQuantity(item.qty)
+        lineItem_id1.setUnitPrice(item.price)
+        lineItemList.push(lineItem_id1)
+      })
+    }
 
-    var lineItemList = []
-    lineItemList.push(lineItem_id1)
-    lineItemList.push(lineItem_id2)
+    // var lineItem_id2 = new ApiContracts.LineItemType()
+    // lineItem_id2.setItemId("2")
+    // lineItem_id2.setName("vase2")
+    // lineItem_id2.setDescription("cannes logo2")
+    // lineItem_id2.setQuantity("28")
+    // lineItem_id2.setUnitPrice("25.00")
+
+    // var lineItemList = []
+    // lineItemList.push(lineItem_id1)
+    // lineItemList.push(lineItem_id2)
 
     var lineItems = new ApiContracts.ArrayOfLineItem()
     lineItems.setLineItem(lineItemList)
@@ -183,7 +207,7 @@ const OrderScreen = ({ match, history }) => {
     transactionRequestType.setAmount('100.00');
     transactionRequestType.setLineItems(lineItems);
     // transactionRequestType.setUserFields(userFields);
-    transactionRequestType.setOrder(orderDetails);
+    // transactionRequestType.setOrder(orderDetails);
     transactionRequestType.setTax(tax);
     transactionRequestType.setShipping(shipping);
     transactionRequestType.setBillTo(billTo);
@@ -268,6 +292,7 @@ const OrderScreen = ({ match, history }) => {
               </p>
               <p>
                 <strong>Address:</strong>
+                {order.shippingAddress.firstName}{" "}{order.shippingAddress.lastName}{" "}
                 {order.shippingAddress.address}, {order.shippingAddress.city}{" "}
                 {order.shippingAddress.postalCode},{" "}
                 {order.shippingAddress.country}

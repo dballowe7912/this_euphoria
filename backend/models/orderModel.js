@@ -21,6 +21,8 @@ const orderSchema = mongoose.Schema(
       },
     ],
     shippingAddress: {
+      firstName: { type: String, required: true },
+      lastName: { type: String, required: true },
       address: { type: String, required: true },
       city: { type: String, required: true },
       postalCode: { type: String, required: true },
@@ -39,7 +41,7 @@ const orderSchema = mongoose.Schema(
     taxPrice: {
       type: Number,
       required: true,
-      default: 0.0,
+      default: 0.0625,
     },
     shippingPrice: {
       type: Number,
