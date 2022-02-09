@@ -43,7 +43,6 @@ const PlaceOrderScreen = ({ history }) => {
       dispatch({ type: USER_DETAILS_RESET })
       dispatch({ type: ORDER_CREATE_RESET })
     }
-    console.log(cart.shippingAddress)
     // eslint-disable-next-line
   }, [history, success])
 

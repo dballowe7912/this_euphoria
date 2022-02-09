@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { PayPalButton } from 'react-paypal-button-v2'
 import { HostedForm } from 'react-acceptjs'
 import { Link } from 'react-router-dom'
 import { Row, Col, ListGroup, Image, Card, Button } from 'react-bootstrap'
@@ -23,27 +22,13 @@ import { Constants as SDKConstants } from "authorizenet"
 
 const OrderScreen = ({ match, history }) => {
   const orderId = match.params.id
-
-  const [sdkReady, setSdkReady] = useState(false)
-  const [ paymentResonse, setPaymentResponse ] = useState({})
+  
   const [ authData, setAuthData ] = useState({})
 
   const dispatch = useDispatch()
 
   const orderDetails = useSelector((state) => state.orderDetails)
   const { order, loading, error } = orderDetails
-
-  // if (order) {
-  //   console.log(orderDetails)
-  //   const orderList = order.orderItems.map((item) => {
-      
-  //   console.log(item)
-  //   })
-    // console.log(order.shippingAddress.address)       // street
-    // console.log(order.shippingAddress.city)          // city
-    // console.log(order.shippingAddress.state)         // state
-    // console.log(order.shippingAddress.postalCode)    // zip
-  // }
 
   const orderPay = useSelector((state) => state.orderPay)
   const { loading: loadingPay, success: successPay } = orderPay
@@ -76,43 +61,20 @@ const OrderScreen = ({ match, history }) => {
   }
 
   useEffect(() => {
-        
-    console.log(order)
-
     addAuth()
 
     if (!userInfo) {
       history.push('/login')
     }
 
-    const addPayPalScript = async () => {
-      const { data: clientId } = await axios.get('/api/config/paypal')
-
-      const script = document.createElement('script')
-      script.type = 'text/javascript'
-      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`
-      script.async = true
-      script.onload = () => {
-        setSdkReady(true)
-      }
-      document.body.appendChild(script)
-    }
-
     if (!order || successPay || successDeliver || order._id !== orderId) {
       dispatch({ type: ORDER_PAY_RESET })
       dispatch({ type: ORDER_DELIVER_RESET })
       dispatch(getOrderDetails(orderId))
-    } else if (!order.isPaid) {
-      if (!window.paypal) {
-        addPayPalScript()
-      } else {
-        setSdkReady(true)
-      }
-    }
+    } 
   }, [dispatch, orderId, successPay, successDeliver, order, authData, history, userInfo])
 
   const successPaymentHandler = (paymentResult) => {
-    console.log(paymentResult)
     dispatch(payOrder(orderId, paymentResult))
   }
 
@@ -140,11 +102,11 @@ const OrderScreen = ({ match, history }) => {
 
     var tax = new ApiContracts.ExtendedAmountType()
 
-    // GET TAX FROM ORDER?
+    // GET TAX FROM ORDER
     tax.setAmount(order.taxPrice)
     tax.setName("Sales Tax")
 
-    // GET SHIPPING COST?
+    // GET SHIPPING COST
     var shipping = new ApiContracts.ExtendedAmountType()
     shipping.setAmount("10.00")
     shipping.setName("USPS")
@@ -152,16 +114,16 @@ const OrderScreen = ({ match, history }) => {
 
     // GET BILL TO INFO FROM ORDER
     var billTo = new ApiContracts.CustomerAddressType()
-    billTo.setFirstName("Ellen")
-    billTo.setLastName("Johnson")
-    billTo.setCompany("Souveniropolis")
-    billTo.setAddress("14 Main Street")
-    billTo.setCity("Pecan Springs")
-    billTo.setState("TX")
-    billTo.setZip("44628")
+    billTo.setFirstName(order.shippingAddress.firstName)
+    billTo.setLastName(order.shippingAddress.lastName)
+    billTo.setAddress(order.shippingAddress.address)
+    billTo.setCity(order.shippingAddress.city)
+    billTo.setState(order.shippingAddress.state)
+    billTo.setZip(order.shippingAddress.postalCode)
     billTo.setCountry("USA")
+    billTo.setEmail(userInfo.email)
 
-    // GET SHIPPING INFO -- order.shippingAddress.
+    // GET SHIPPING INFO
     var shipTo = new ApiContracts.CustomerAddressType()
     shipTo.setFirstName(order.shippingAddress.firstName)
     shipTo.setLastName(order.shippingAddress.lastName)
@@ -173,7 +135,6 @@ const OrderScreen = ({ match, history }) => {
 
     // GET ITEMS DETAILS
     const { orderItems } = order
-    console.log(orderItems)
 
     if (orderItems) {
       var lineItemList = []
@@ -209,7 +170,7 @@ const OrderScreen = ({ match, history }) => {
     createRequest.setTransactionRequest(transactionRequestType);
 
     //pretty print request
-    console.log(JSON.stringify(createRequest.getJSON(), null, 2));
+    console.log(createRequest.getJSON(), null, 2);
       
     var ctrl = new ApiControllers.CreateTransactionController(createRequest.getJSON());
     //Defaults to sandbox
@@ -231,6 +192,7 @@ const OrderScreen = ({ match, history }) => {
             console.log('Response Code: ' + response.getTransactionResponse().getResponseCode());
             console.log('Message Code: ' + response.getTransactionResponse().getMessages().getMessage()[0].getCode());
             console.log('Description: ' + response.getTransactionResponse().getMessages().getMessage()[0].getDescription());
+            
           }
           else {
             console.log('Failed Transaction.');
@@ -255,7 +217,8 @@ const OrderScreen = ({ match, history }) => {
       }	else {
       console.log('Null Response.');
       }  
-      // callback(response);
+      
+      successPaymentHandler(response)
     })
   }
 
@@ -282,8 +245,9 @@ const OrderScreen = ({ match, history }) => {
               </p>
               <p>
                 <strong>Address:</strong>
-                {order.shippingAddress.firstName}{" "}{order.shippingAddress.lastName}{" "}
-                {order.shippingAddress.address}, {order.shippingAddress.city}{" "}
+                {order.shippingAddress.firstName}{" "}
+                {order.shippingAddress.lastName} {order.shippingAddress.address}
+                , {order.shippingAddress.city}{" "}
                 {order.shippingAddress.postalCode},{" "}
                 {order.shippingAddress.country}
               </p>
@@ -375,16 +339,14 @@ const OrderScreen = ({ match, history }) => {
               {!order.isPaid && (
                 <ListGroup.Item>
                   {loadingPay && <Loader />}
-                  {!sdkReady ? (
-                    <Loader />
-                  ) : (
                     <HostedForm
                       buttonClassName="btn btn-block border"
                       authData={authData}
                       onSubmit={handleSubmit}
+                      formButtonText="Pay Now"
+                      formHeaderText="Enter Credit Card Info"
                     />
-
-                  )}
+                  )
                 </ListGroup.Item>
               )}
               {loadingDeliver && <Loader />}
