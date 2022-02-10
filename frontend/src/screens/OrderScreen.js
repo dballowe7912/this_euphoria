@@ -243,14 +243,18 @@ const OrderScreen = ({ match, history }) => {
                 <strong>Email: </strong>{" "}
                 <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
               </p>
-              <p>
                 <strong>Address:</strong>
-                {order.shippingAddress.firstName}{" "}
-                {order.shippingAddress.lastName} {order.shippingAddress.address}
-                , {order.shippingAddress.city}{" "}
-                {order.shippingAddress.postalCode},{" "}
-                {order.shippingAddress.country}
-              </p>
+                <p>
+                  {order.shippingAddress.firstName}
+                  {order.shippingAddress.lastName}
+                  <br/>
+                  {order.shippingAddress.address}
+                  <br/>
+                  {order.shippingAddress.city}, {order.shippingAddress.state}
+                  {order.shippingAddress.postalCode}
+                  <br/>
+                  {order.shippingAddress.country}
+                </p>
               {order.isDelivered ? (
                 <Message variant="success">
                   Delivered on {order.deliveredAt}
@@ -264,7 +268,7 @@ const OrderScreen = ({ match, history }) => {
               <h2>Payment Method</h2>
               <p>
                 <strong>Method: </strong>
-                {order.paymentMethod}
+                Credit Card
               </p>
               {order.isPaid ? (
                 <Message variant="success">Paid on {order.paidAt}</Message>
@@ -339,14 +343,13 @@ const OrderScreen = ({ match, history }) => {
               {!order.isPaid && (
                 <ListGroup.Item>
                   {loadingPay && <Loader />}
-                    <HostedForm
-                      buttonClassName="btn btn-block border"
-                      authData={authData}
-                      onSubmit={handleSubmit}
-                      formButtonText="Pay Now"
-                      formHeaderText="Enter Credit Card Info"
-                    />
-                  )
+                  <HostedForm
+                    buttonClassName="btn btn-block border"
+                    authData={authData}
+                    onSubmit={handleSubmit}
+                    formButtonText="Pay Now"
+                    formHeaderText="Enter Credit Card Info"
+                  />
                 </ListGroup.Item>
               )}
               {loadingDeliver && <Loader />}
