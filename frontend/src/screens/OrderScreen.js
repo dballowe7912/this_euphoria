@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import { HostedForm } from 'react-acceptjs'
-import { Link } from 'react-router-dom'
-import { Row, Col, ListGroup, Image, Card, Button } from 'react-bootstrap'
-import { useDispatch, useSelector } from 'react-redux'
-import Message from '../components/Message'
-import Loader from '../components/Loader'
+import React, { useState, useEffect } from "react"
+import axios from "axios"
+import { HostedForm } from "react-acceptjs"
+import { Link } from "react-router-dom"
+import { Row, Col, ListGroup, Image, Card, Button } from "react-bootstrap"
+import { useDispatch, useSelector } from "react-redux"
+import Message from "../components/Message"
+import Loader from "../components/Loader"
 import {
   getOrderDetails,
   payOrder,
   deliverOrder,
-} from '../actions/orderActions'
+} from "../actions/orderActions"
 import {
   ORDER_PAY_RESET,
   ORDER_DELIVER_RESET,
-} from '../constants/orderConstants'
+} from "../constants/orderConstants"
 
 import { APIContracts as ApiContracts } from "authorizenet"
 import { APIControllers as ApiControllers } from "authorizenet"
@@ -22,8 +22,8 @@ import { Constants as SDKConstants } from "authorizenet"
 
 const OrderScreen = ({ match, history }) => {
   const orderId = match.params.id
-  
-  const [ authData, setAuthData ] = useState({})
+
+  const [authData, setAuthData] = useState({})
 
   const dispatch = useDispatch()
 
@@ -51,28 +51,37 @@ const OrderScreen = ({ match, history }) => {
   }
 
   const addAuth = async () => {
-      const {data: apiLoginID} = await axios.get("/api/config/authorizenet")
-      const {data: clientKey} = await axios.get("/api/config/client")
-      const {data: transactionKey} = await axios.get("/api/config/transaction")
-      authData.apiLoginID = apiLoginID
-      authData.clientKey = clientKey
-      authData.transactionKey = transactionKey
-      setAuthData(authData)
+    const { data: apiLoginID } = await axios.get("/api/config/authorizenet")
+    const { data: clientKey } = await axios.get("/api/config/client")
+    const { data: transactionKey } = await axios.get("/api/config/transaction")
+    authData.apiLoginID = apiLoginID
+    authData.clientKey = clientKey
+    authData.transactionKey = transactionKey
+    setAuthData(authData)
   }
 
   useEffect(() => {
     addAuth()
 
     if (!userInfo) {
-      history.push('/login')
+      history.push("/login")
     }
 
     if (!order || successPay || successDeliver || order._id !== orderId) {
       dispatch({ type: ORDER_PAY_RESET })
       dispatch({ type: ORDER_DELIVER_RESET })
       dispatch(getOrderDetails(orderId))
-    } 
-  }, [dispatch, orderId, successPay, successDeliver, order, authData, history, userInfo])
+    }
+  }, [
+    dispatch,
+    orderId,
+    successPay,
+    successDeliver,
+    order,
+    authData,
+    history,
+    userInfo,
+  ])
 
   const successPaymentHandler = (paymentResult) => {
     dispatch(payOrder(orderId, paymentResult))
@@ -88,7 +97,7 @@ const OrderScreen = ({ match, history }) => {
     }
 
     const merchantAuthenticationType =
-    new ApiContracts.MerchantAuthenticationType()
+      new ApiContracts.MerchantAuthenticationType()
     merchantAuthenticationType.setName(authData.apiLoginID)
     merchantAuthenticationType.setTransactionKey(authData.transactionKey)
     var opaqueData = response.opaqueData
@@ -152,77 +161,132 @@ const OrderScreen = ({ match, history }) => {
     var lineItems = new ApiContracts.ArrayOfLineItem()
     lineItems.setLineItem(lineItemList)
 
-    var transactionRequestType = new ApiContracts.TransactionRequestType();
-    transactionRequestType.setTransactionType(ApiContracts.TransactionTypeEnum.AUTHCAPTURETRANSACTION);
-    transactionRequestType.setPayment(paymentType);
-    transactionRequestType.setAmount(order.totalPrice);
-    transactionRequestType.setLineItems(lineItems);
+    var transactionRequestType = new ApiContracts.TransactionRequestType()
+    transactionRequestType.setTransactionType(
+      ApiContracts.TransactionTypeEnum.AUTHCAPTURETRANSACTION
+    )
+    transactionRequestType.setPayment(paymentType)
+    transactionRequestType.setAmount(order.totalPrice)
+    transactionRequestType.setLineItems(lineItems)
     // transactionRequestType.setUserFields(userFields);
     // transactionRequestType.setOrder(orderDetails);
-    transactionRequestType.setTax(tax);
-    transactionRequestType.setShipping(shipping);
-    transactionRequestType.setBillTo(billTo);
-    transactionRequestType.setShipTo(shipTo);
+    transactionRequestType.setTax(tax)
+    transactionRequestType.setShipping(shipping)
+    transactionRequestType.setBillTo(billTo)
+    transactionRequestType.setShipTo(shipTo)
     // transactionRequestType.setTransactionSettings(transactionSettings);
 
-    var createRequest = new ApiContracts.CreateTransactionRequest();
-    createRequest.setMerchantAuthentication(merchantAuthenticationType);
-    createRequest.setTransactionRequest(transactionRequestType);
+    var createRequest = new ApiContracts.CreateTransactionRequest()
+    createRequest.setMerchantAuthentication(merchantAuthenticationType)
+    createRequest.setTransactionRequest(transactionRequestType)
 
     //pretty print request
-    console.log(createRequest.getJSON(), null, 2);
-      
-    var ctrl = new ApiControllers.CreateTransactionController(createRequest.getJSON());
+    console.log(createRequest.getJSON(), null, 2)
+
+    var ctrl = new ApiControllers.CreateTransactionController(
+      createRequest.getJSON()
+    )
     //Defaults to sandbox
-    //ctrl.setEnvironment(SDKConstants.endpoint.production);
+    ctrl.setEnvironment(SDKConstants.endpoint.sandbox);
 
-    ctrl.execute(function(){
+    ctrl.execute(function () {
+      var apiResponse = ctrl.getResponse()
 
-      var apiResponse = ctrl.getResponse();
-
-      var response = new ApiContracts.CreateTransactionResponse(apiResponse);
+      var response = new ApiContracts.CreateTransactionResponse(apiResponse)
 
       //pretty print response
-      console.log(JSON.stringify(response, null, 2));
+      console.log(JSON.stringify(response, null, 2))
 
-      if(response != null){
-        if(response.getMessages().getResultCode() == ApiContracts.MessageTypeEnum.OK){
-          if(response.getTransactionResponse().getMessages() != null){
-            console.log('Successfully created transaction with Transaction ID: ' + response.getTransactionResponse().getTransId());
-            console.log('Response Code: ' + response.getTransactionResponse().getResponseCode());
-            console.log('Message Code: ' + response.getTransactionResponse().getMessages().getMessage()[0].getCode());
-            console.log('Description: ' + response.getTransactionResponse().getMessages().getMessage()[0].getDescription());
-            
-          }
-          else {
-            console.log('Failed Transaction.');
-            if(response.getTransactionResponse().getErrors() != null){
-              console.log('Error Code: ' + response.getTransactionResponse().getErrors().getError()[0].getErrorCode());
-              console.log('Error message: ' + response.getTransactionResponse().getErrors().getError()[0].getErrorText());
+      if (response != null) {
+        if (
+          response.getMessages().getResultCode() ==
+          ApiContracts.MessageTypeEnum.OK
+        ) {
+          if (response.getTransactionResponse().getMessages() != null) {
+            console.log(
+              "Successfully created transaction with Transaction ID: " +
+                response.getTransactionResponse().getTransId()
+            )
+            console.log(
+              "Response Code: " +
+                response.getTransactionResponse().getResponseCode()
+            )
+            console.log(
+              "Message Code: " +
+                response
+                  .getTransactionResponse()
+                  .getMessages()
+                  .getMessage()[0]
+                  .getCode()
+            )
+            console.log(
+              "Description: " +
+                response
+                  .getTransactionResponse()
+                  .getMessages()
+                  .getMessage()[0]
+                  .getDescription()
+            )
+          } else {
+            console.log("Failed Transaction.")
+            if (response.getTransactionResponse().getErrors() != null) {
+              console.log(
+                "Error Code: " +
+                  response
+                    .getTransactionResponse()
+                    .getErrors()
+                    .getError()[0]
+                    .getErrorCode()
+              )
+              console.log(
+                "Error message: " +
+                  response
+                    .getTransactionResponse()
+                    .getErrors()
+                    .getError()[0]
+                    .getErrorText()
+              )
             }
           }
-        }
-        else {
-          console.log('Failed Transaction. ');
-          if(response.getTransactionResponse() != null && response.getTransactionResponse().getErrors() != null){
-          
-            console.log('Error Code: ' + response.getTransactionResponse().getErrors().getError()[0].getErrorCode());
-            console.log('Error message: ' + response.getTransactionResponse().getErrors().getError()[0].getErrorText());
+        } else {
+          console.log("Failed Transaction. ")
+          if (
+            response.getTransactionResponse() != null &&
+            response.getTransactionResponse().getErrors() != null
+          ) {
+            console.log(
+              "Error Code: " +
+                response
+                  .getTransactionResponse()
+                  .getErrors()
+                  .getError()[0]
+                  .getErrorCode()
+            )
+            console.log(
+              "Error message: " +
+                response
+                  .getTransactionResponse()
+                  .getErrors()
+                  .getError()[0]
+                  .getErrorText()
+            )
+          } else {
+            console.log(
+              "Error Code: " + response.getMessages().getMessage()[0].getCode()
+            )
+            console.log(
+              "Error message: " +
+                response.getMessages().getMessage()[0].getText()
+            )
           }
-          else {
-            console.log('Error Code: ' + response.getMessages().getMessage()[0].getCode());
-            console.log('Error message: ' + response.getMessages().getMessage()[0].getText());
-          }
         }
-      }	else {
-      console.log('Null Response.');
-      }  
-      
+      } else {
+        console.log("Null Response.")
+      }
+
       successPaymentHandler(response)
     })
   }
-
-
 
   return loading ? (
     <Loader />
@@ -243,18 +307,18 @@ const OrderScreen = ({ match, history }) => {
                 <strong>Email: </strong>{" "}
                 <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
               </p>
-                <strong>Address:</strong>
-                <p>
-                  {order.shippingAddress.firstName}
-                  {order.shippingAddress.lastName}
-                  <br/>
-                  {order.shippingAddress.address}
-                  <br/>
-                  {order.shippingAddress.city}, {order.shippingAddress.state}
-                  {order.shippingAddress.postalCode}
-                  <br/>
-                  {order.shippingAddress.country}
-                </p>
+              <strong>Address:</strong>
+              <p>
+                {order.shippingAddress.firstName}
+                {order.shippingAddress.lastName}
+                <br />
+                {order.shippingAddress.address}
+                <br />
+                {order.shippingAddress.city}, {order.shippingAddress.state}
+                {order.shippingAddress.postalCode}
+                <br />
+                {order.shippingAddress.country}
+              </p>
               {order.isDelivered ? (
                 <Message variant="success">
                   Delivered on {order.deliveredAt}

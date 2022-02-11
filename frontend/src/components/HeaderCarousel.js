@@ -27,7 +27,7 @@ const HeaderCarousel = () => {
           <img
             className="d-block w-100"
             src="/carousel-photos/potpourri.jpg"
-            alt="Photo slide of potpourri and incense"
+            alt="Carousel slide of potpourri and incense"
           />
 
           <Carousel.Caption>
@@ -47,7 +47,7 @@ const HeaderCarousel = () => {
           <img
             className="d-block w-100"
             src="/carousel-photos/skate-board.jpg"
-            alt="Photo of skate boards and accessories"
+            alt="Carousel slide of skate boards and accessories"
           />
 
           <Carousel.Caption>

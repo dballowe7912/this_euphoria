@@ -41,7 +41,10 @@ const ProductScreen = ({ history, match }) => {
       dispatch(listProductDetails(match.params.id))
       dispatch({ type: PRODUCT_CREATE_REVIEW_RESET })
     }
-  }, [dispatch, match, successProductReview, product._id])
+    if (product.price) {
+      console.log(product.price)
+    }
+  }, [dispatch, match, successProductReview, product._id, product.price])
 
   const addToCartHandler = () => {
     history.push(`/cart/${match.params.id}?qty=${qty}`)
