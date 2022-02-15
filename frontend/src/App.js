@@ -60,6 +60,7 @@ const App = () => {
           <Route path="/search/:keyword" component={HomeScreen} exact />
           <Route path="/page/:pageNumber" component={HomeScreen} exact />
           <Route path="/collection/:id" component={CollectionScreen} />
+          <Route path="/collection/:id/page/:pageNumber" component={CollectionScreen} exact/>
           <Route
             path="/search/:keyword/page/:pageNumber"
             component={HomeScreen}

@@ -1,8 +1,13 @@
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 import { Pagination } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
+import collections from '../data/collections'
+
 
 const Paginate = ({ pages, page, isAdmin = false, keyword = '' }) => {
+  const history = useHistory()
+  console.log(history)
   return (
     pages > 1 && (
       <Pagination>
