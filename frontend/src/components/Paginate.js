@@ -7,7 +7,7 @@ import collections from '../data/collections'
 
 const Paginate = ({ pages, page, isAdmin = false, keyword = '' }) => {
   const history = useHistory()
-  console.log(history)
+
   return (
     pages > 1 && (
       <Pagination>

@@ -16,8 +16,6 @@ const ShippingScreen = ({ history }) => {
   const [postalCode, setPostalCode] = useState(shippingAddress.postalCode)
   const [state, setState] = useState(shippingAddress.state)
 
-  console.log(firstName)
-
   const dispatch = useDispatch()
 
   const submitHandler = (e) => {

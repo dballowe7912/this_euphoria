@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import axios from "axios"
+
 import { HostedForm } from "react-acceptjs"
 import { Link } from "react-router-dom"
 import { Row, Col, ListGroup, Image, Card, Button } from "react-bootstrap"
@@ -51,12 +52,13 @@ const OrderScreen = ({ match, history }) => {
   }
 
   const addAuth = async () => {
-    const { data: apiLoginID } = await axios.get("/api/config/authorizenet")
-    const { data: clientKey } = await axios.get("/api/config/client")
-    const { data: transactionKey } = await axios.get("/api/config/transaction")
-    authData.apiLoginID = apiLoginID
-    authData.clientKey = clientKey
-    authData.transactionKey = transactionKey
+    // const { data: apiLoginID } = await axios.get("/api/config/authorizenet")
+    // const { data: clientKey } = await axios.get("/api/config/client")
+    // const { data: transactionKey } = await axios.get("/api/config/transaction")
+    
+    const { data: authData} = await axios.get("/api/config/capture")
+    
+
     setAuthData(authData)
   }
 
@@ -91,145 +93,169 @@ const OrderScreen = ({ match, history }) => {
     dispatch(deliverOrder(order))
   }
 
-  const handleSubmit = (response) => {
-    if (!authData) {
-      addAuth()
-    }
-
-    const merchantAuthenticationType =
-      new ApiContracts.MerchantAuthenticationType()
-    merchantAuthenticationType.setName(authData.apiLoginID)
-    merchantAuthenticationType.setTransactionKey(authData.transactionKey)
-    var opaqueData = response.opaqueData
-
-    var paymentType = new ApiContracts.PaymentType()
-    paymentType.setOpaqueData(opaqueData)
-
-    // var orderDetails = new ApiContracts.OrderType()
-    // orderDetails.setInvoiceNumber('1')
-    // orderDetails.setDescription("Product Description")
-
-    var tax = new ApiContracts.ExtendedAmountType()
-
-    // GET TAX FROM ORDER
-    tax.setAmount(order.taxPrice)
-    tax.setName("Sales Tax")
-
-    // GET SHIPPING COST
-    var shipping = new ApiContracts.ExtendedAmountType()
-    shipping.setAmount("10.00")
-    shipping.setName("USPS")
-    shipping.setDescription("Shipping flat rate")
-
-    // GET BILL TO INFO FROM ORDER
-    var billTo = new ApiContracts.CustomerAddressType()
-    billTo.setFirstName(order.shippingAddress.firstName)
-    billTo.setLastName(order.shippingAddress.lastName)
-    billTo.setAddress(order.shippingAddress.address)
-    billTo.setCity(order.shippingAddress.city)
-    billTo.setState(order.shippingAddress.state)
-    billTo.setZip(order.shippingAddress.postalCode)
-    billTo.setCountry("USA")
-    billTo.setEmail(userInfo.email)
-
-    // GET SHIPPING INFO
-    var shipTo = new ApiContracts.CustomerAddressType()
-    shipTo.setFirstName(order.shippingAddress.firstName)
-    shipTo.setLastName(order.shippingAddress.lastName)
-    shipTo.setAddress(order.shippingAddress.address)
-    shipTo.setCity(order.shippingAddress.city)
-    shipTo.setState(order.shippingAddress.state)
-    shipTo.setZip(order.shippingAddress.postalCode)
-    shipTo.setCountry("USA")
-
-    // GET ITEMS DETAILS
-    const { orderItems } = order
-
-    if (orderItems) {
-      var lineItemList = []
-      orderItems.forEach((item) => {
-        var lineItem_id1 = new ApiContracts.LineItemType()
-        lineItem_id1.setItemId(item._id)
-        lineItem_id1.setName(item.name.slice(0, 30))
-        // lineItem_id1.setDescription("cannes logo")
-        lineItem_id1.setQuantity(item.qty)
-        lineItem_id1.setUnitPrice(item.price)
-        lineItemList.push(lineItem_id1)
-      })
-    }
-
-    var lineItems = new ApiContracts.ArrayOfLineItem()
-    lineItems.setLineItem(lineItemList)
-
-    var transactionRequestType = new ApiContracts.TransactionRequestType()
-    transactionRequestType.setTransactionType(
-      ApiContracts.TransactionTypeEnum.AUTHCAPTURETRANSACTION
-    )
-    transactionRequestType.setPayment(paymentType)
-    transactionRequestType.setAmount(order.totalPrice)
-    transactionRequestType.setLineItems(lineItems)
-    // transactionRequestType.setUserFields(userFields);
-    // transactionRequestType.setOrder(orderDetails);
-    transactionRequestType.setTax(tax)
-    transactionRequestType.setShipping(shipping)
-    transactionRequestType.setBillTo(billTo)
-    transactionRequestType.setShipTo(shipTo)
-    // transactionRequestType.setTransactionSettings(transactionSettings);
-
-    var createRequest = new ApiContracts.CreateTransactionRequest()
-    createRequest.setMerchantAuthentication(merchantAuthenticationType)
-    createRequest.setTransactionRequest(transactionRequestType)
-
-    //pretty print request
-    console.log(createRequest.getJSON(), null, 2)
-
-    var ctrl = new ApiControllers.CreateTransactionController(
-      createRequest.getJSON()
-    )
-    //Defaults to sandbox
-    ctrl.setEnvironment(SDKConstants.endpoint.sandbox);
-
-    ctrl.execute(function () {
-      var apiResponse = ctrl.getResponse()
-
-      var response = new ApiContracts.CreateTransactionResponse(apiResponse)
-
-      //pretty print response
-      console.log(JSON.stringify(response, null, 2))
-
-      if (response != null) {
-        if (
-          response.getMessages().getResultCode() ==
-          ApiContracts.MessageTypeEnum.OK
-        ) {
-          if (response.getTransactionResponse().getMessages() != null) {
-            console.log(
-              "Successfully created transaction with Transaction ID: " +
-                response.getTransactionResponse().getTransId()
-            )
-            console.log(
-              "Response Code: " +
-                response.getTransactionResponse().getResponseCode()
-            )
-            console.log(
-              "Message Code: " +
-                response
-                  .getTransactionResponse()
-                  .getMessages()
-                  .getMessage()[0]
-                  .getCode()
-            )
-            console.log(
-              "Description: " +
-                response
-                  .getTransactionResponse()
-                  .getMessages()
-                  .getMessage()[0]
-                  .getDescription()
-            )
+  const handleSubmit = async (response) => {
+    const { data: authData } = await axios.get("/api/config/capture")
+    console.log(authData)
+    try {
+      
+      const merchantAuthenticationType =
+        new ApiContracts.MerchantAuthenticationType()
+        merchantAuthenticationType.setName(authData.apiLoginID)
+        merchantAuthenticationType.setTransactionKey(authData.transactionKey)
+        var opaqueData = response.opaqueData
+  
+      var paymentType = new ApiContracts.PaymentType()
+      paymentType.setOpaqueData(opaqueData)
+  
+      // var orderDetails = new ApiContracts.OrderType()
+      // orderDetails.setInvoiceNumber('1')
+      // orderDetails.setDescription("Product Description")
+  
+      var tax = new ApiContracts.ExtendedAmountType()
+  
+      // GET TAX FROM ORDER
+      tax.setAmount(order.taxPrice)
+      tax.setName("Sales Tax")
+  
+      // GET SHIPPING COST
+      var shipping = new ApiContracts.ExtendedAmountType()
+      shipping.setAmount("10.00")
+      shipping.setName("USPS")
+      shipping.setDescription("Shipping flat rate")
+  
+      // GET BILL TO INFO FROM ORDER
+      var billTo = new ApiContracts.CustomerAddressType()
+      billTo.setFirstName(order.shippingAddress.firstName)
+      billTo.setLastName(order.shippingAddress.lastName)
+      billTo.setAddress(order.shippingAddress.address)
+      billTo.setCity(order.shippingAddress.city)
+      billTo.setState(order.shippingAddress.state)
+      billTo.setZip(order.shippingAddress.postalCode)
+      billTo.setCountry("USA")
+      billTo.setEmail(userInfo.email)
+  
+      // GET SHIPPING INFO
+      var shipTo = new ApiContracts.CustomerAddressType()
+      shipTo.setFirstName(order.shippingAddress.firstName)
+      shipTo.setLastName(order.shippingAddress.lastName)
+      shipTo.setAddress(order.shippingAddress.address)
+      shipTo.setCity(order.shippingAddress.city)
+      shipTo.setState(order.shippingAddress.state)
+      shipTo.setZip(order.shippingAddress.postalCode)
+      shipTo.setCountry("USA")
+  
+      // GET ITEMS DETAILS
+      const { orderItems } = order
+  
+      if (orderItems) {
+        var lineItemList = []
+        orderItems.forEach((item) => {
+          var lineItem_id1 = new ApiContracts.LineItemType()
+          lineItem_id1.setItemId(item._id)
+          lineItem_id1.setName(item.name.slice(0, 30))
+          // lineItem_id1.setDescription("cannes logo")
+          lineItem_id1.setQuantity(item.qty)
+          lineItem_id1.setUnitPrice(item.price)
+          lineItemList.push(lineItem_id1)
+        })
+      }
+  
+      var lineItems = new ApiContracts.ArrayOfLineItem()
+      lineItems.setLineItem(lineItemList)
+  
+      var transactionRequestType = new ApiContracts.TransactionRequestType()
+      transactionRequestType.setTransactionType(
+        ApiContracts.TransactionTypeEnum.AUTHCAPTURETRANSACTION
+      )
+      transactionRequestType.setPayment(paymentType)
+      transactionRequestType.setAmount(order.totalPrice)
+      transactionRequestType.setLineItems(lineItems)
+      // transactionRequestType.setUserFields(userFields);
+      // transactionRequestType.setOrder(orderDetails);
+      transactionRequestType.setTax(tax)
+      transactionRequestType.setShipping(shipping)
+      transactionRequestType.setBillTo(billTo)
+      transactionRequestType.setShipTo(shipTo)
+      // transactionRequestType.setTransactionSettings(transactionSettings);
+  
+      var createRequest = new ApiContracts.CreateTransactionRequest()
+      createRequest.setMerchantAuthentication(merchantAuthenticationType)
+      createRequest.setTransactionRequest(transactionRequestType)
+  
+      //pretty print request
+      console.log(createRequest.getJSON(), null, 2)
+  
+      var ctrl = new ApiControllers.CreateTransactionController(
+        createRequest.getJSON()
+      )
+      //Defaults to sandbox
+      ctrl.setEnvironment(SDKConstants.endpoint.sandbox);
+  
+      ctrl.execute(function () {
+        var apiResponse = ctrl.getResponse()
+  
+        var response = new ApiContracts.CreateTransactionResponse(apiResponse)
+  
+        //pretty print response
+        console.log(JSON.stringify(response, null, 2))
+  
+        if (response != null) {
+          if (
+            response.getMessages().getResultCode() ===
+            ApiContracts.MessageTypeEnum.OK
+          ) {
+            if (response.getTransactionResponse().getMessages() != null) {
+              console.log(
+                "Successfully created transaction with Transaction ID: " +
+                  response.getTransactionResponse().getTransId()
+              )
+              console.log(
+                "Response Code: " +
+                  response.getTransactionResponse().getResponseCode()
+              )
+              console.log(
+                "Message Code: " +
+                  response
+                    .getTransactionResponse()
+                    .getMessages()
+                    .getMessage()[0]
+                    .getCode()
+              )
+              console.log(
+                "Description: " +
+                  response
+                    .getTransactionResponse()
+                    .getMessages()
+                    .getMessage()[0]
+                    .getDescription()
+              )
+            } else {
+              console.log("Failed Transaction.")
+              if (response.getTransactionResponse().getErrors() != null) {
+                console.log(
+                  "Error Code: " +
+                    response
+                      .getTransactionResponse()
+                      .getErrors()
+                      .getError()[0]
+                      .getErrorCode()
+                )
+                console.log(
+                  "Error message: " +
+                    response
+                      .getTransactionResponse()
+                      .getErrors()
+                      .getError()[0]
+                      .getErrorText()
+                )
+              }
+            }
           } else {
-            console.log("Failed Transaction.")
-            if (response.getTransactionResponse().getErrors() != null) {
+            console.log("Failed Transaction. ")
+            if (
+              response.getTransactionResponse() != null &&
+              response.getTransactionResponse().getErrors() != null
+            ) {
               console.log(
                 "Error Code: " +
                   response
@@ -246,46 +272,26 @@ const OrderScreen = ({ match, history }) => {
                     .getError()[0]
                     .getErrorText()
               )
+            } else {
+              console.log(
+                "Error Code: " + response.getMessages().getMessage()[0].getCode()
+              )
+              console.log(
+                "Error message: " +
+                  response.getMessages().getMessage()[0].getText()
+              )
             }
           }
         } else {
-          console.log("Failed Transaction. ")
-          if (
-            response.getTransactionResponse() != null &&
-            response.getTransactionResponse().getErrors() != null
-          ) {
-            console.log(
-              "Error Code: " +
-                response
-                  .getTransactionResponse()
-                  .getErrors()
-                  .getError()[0]
-                  .getErrorCode()
-            )
-            console.log(
-              "Error message: " +
-                response
-                  .getTransactionResponse()
-                  .getErrors()
-                  .getError()[0]
-                  .getErrorText()
-            )
-          } else {
-            console.log(
-              "Error Code: " + response.getMessages().getMessage()[0].getCode()
-            )
-            console.log(
-              "Error message: " +
-                response.getMessages().getMessage()[0].getText()
-            )
-          }
+          console.log("Null Response.")
         }
-      } else {
-        console.log("Null Response.")
-      }
-
-      successPaymentHandler(response)
-    })
+  
+        successPaymentHandler(response)
+      })
+    } catch (error) {
+      console.log(error)
+    }
+    setAuthData({})
   }
 
   return loading ? (
@@ -347,7 +353,8 @@ const OrderScreen = ({ match, history }) => {
                 <Message>Order is empty</Message>
               ) : (
                 <ListGroup variant="flush">
-                  {order.orderItems.map((item, index) => (
+                  {order.orderItems.map((item, index) => {
+                  return (
                     <ListGroup.Item key={index}>
                       <Row>
                         <Col md={1}>
@@ -364,11 +371,12 @@ const OrderScreen = ({ match, history }) => {
                           </Link>
                         </Col>
                         <Col md={4}>
-                          {item.qty} x ${item.price} = ${item.qty * item.price}
+                          {item.qty} x ${item.price.toFixed(2)} = ${(item.qty * item.price).toFixed(2)}
                         </Col>
                       </Row>
                     </ListGroup.Item>
-                  ))}
+                  )}
+                  )}
                 </ListGroup>
               )}
             </ListGroup.Item>

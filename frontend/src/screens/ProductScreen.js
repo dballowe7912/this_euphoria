@@ -41,9 +41,7 @@ const ProductScreen = ({ history, match }) => {
       dispatch(listProductDetails(match.params.id))
       dispatch({ type: PRODUCT_CREATE_REVIEW_RESET })
     }
-    if (product.price) {
-      console.log(product.price)
-    }
+    
   }, [dispatch, match, successProductReview, product._id, product.price])
 
   const addToCartHandler = () => {

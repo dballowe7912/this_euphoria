@@ -10,6 +10,7 @@ import productRoutes from './routes/productRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
 import uploadRoutes from './routes/uploadRoutes.js'
+import { APIContracts } from 'authorizenet'
 
 dotenv.config()
 
@@ -32,15 +33,13 @@ app.get('/api/config/paypal', (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)
 )
 
-app.get("/api/config/authorizenet", (req, res) =>
-  res.send(process.env.AUTHORIZE_API_LOGIN_ID)
-)
-app.get("/api/config/client", (req, res) =>
-  res.send(process.env.AUTHORIZE_API_CLIENT_KEY)
-)
-app.get("/api/config/transaction", (req, res) =>
-  res.send(process.env.AUTHORIZE_TRANSACTION_KEY)
-)
+app.get("/api/config/capture", (req, res) => {
+  res.send({
+    apiLoginID: process.env.AUTHORIZE_API_LOGIN_ID,
+    clientKey: process.env.AUTHORIZE_API_CLIENT_KEY,
+    transactionKey: process.env.AUTHORIZE_TRANSACTION_KEY,
+  })
+})
 
 const __dirname = path.resolve()
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
