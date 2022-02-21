@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react"
-import axios from "axios"
-
+import React, { useEffect } from "react"
+import { authData } from "../authnetConstants/constants"
 import { HostedForm } from "react-acceptjs"
 import { Link } from "react-router-dom"
 import { Row, Col, ListGroup, Image, Card, Button } from "react-bootstrap"
@@ -23,8 +22,6 @@ import { Constants as SDKConstants } from "authorizenet"
 
 const OrderScreen = ({ match, history }) => {
   const orderId = match.params.id
-
-  const [authData, setAuthData] = useState({})
 
   const dispatch = useDispatch()
 
@@ -51,20 +48,7 @@ const OrderScreen = ({ match, history }) => {
     )
   }
 
-  const addAuth = async () => {
-    // const { data: apiLoginID } = await axios.get("/api/config/authorizenet")
-    // const { data: clientKey } = await axios.get("/api/config/client")
-    // const { data: transactionKey } = await axios.get("/api/config/transaction")
-    
-    const { data: authData} = await axios.get("/api/config/capture")
-    
-
-    setAuthData(authData)
-  }
-
   useEffect(() => {
-    addAuth()
-
     if (!userInfo) {
       history.push("/login")
     }
@@ -80,7 +64,6 @@ const OrderScreen = ({ match, history }) => {
     successPay,
     successDeliver,
     order,
-    authData,
     history,
     userInfo,
   ])
@@ -94,8 +77,6 @@ const OrderScreen = ({ match, history }) => {
   }
 
   const handleSubmit = async (response) => {
-    const { data: authData } = await axios.get("/api/config/capture")
-    console.log(authData)
     try {
       
       const merchantAuthenticationType =
@@ -291,7 +272,6 @@ const OrderScreen = ({ match, history }) => {
     } catch (error) {
       console.log(error)
     }
-    setAuthData({})
   }
 
   return loading ? (
