@@ -10,7 +10,6 @@ import productRoutes from './routes/productRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
 import uploadRoutes from './routes/uploadRoutes.js'
-import { APIContracts } from 'authorizenet'
 
 dotenv.config()
 
@@ -39,6 +38,10 @@ app.get("/api/config/capture", (req, res) => {
     clientKey: process.env.AUTHORIZE_API_CLIENT_KEY,
     transactionKey: process.env.AUTHORIZE_TRANSACTION_KEY,
   })
+})
+
+app.post('/api/capture', (req, res) => {
+  console.log(req, res)
 })
 
 const __dirname = path.resolve()

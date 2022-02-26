@@ -35,9 +35,7 @@ const HomeScreen = ({ match }) => {
           Go Back
         </Link>
       )}
-      {
-        page === 1 ? <Collections /> : ''
-      }
+      <Collections />
       {loading ? (
         <Loader />
       ) : error ? (

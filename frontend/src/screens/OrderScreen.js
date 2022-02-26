@@ -52,7 +52,7 @@ const OrderScreen = ({ match, history }) => {
     if (!userInfo) {
       history.push("/login")
     }
-
+    
     if (!order || successPay || successDeliver || order._id !== orderId) {
       dispatch({ type: ORDER_PAY_RESET })
       dispatch({ type: ORDER_DELIVER_RESET })
@@ -67,7 +67,7 @@ const OrderScreen = ({ match, history }) => {
     history,
     userInfo,
   ])
-
+  
   const successPaymentHandler = (paymentResult) => {
     dispatch(payOrder(orderId, paymentResult))
   }
@@ -76,9 +76,8 @@ const OrderScreen = ({ match, history }) => {
     dispatch(deliverOrder(order))
   }
 
-  const handleSubmit = async (response) => {
+  const handleSubmit = (response) => {
     try {
-      
       const merchantAuthenticationType =
         new ApiContracts.MerchantAuthenticationType()
         merchantAuthenticationType.setName(authData.apiLoginID)
@@ -89,7 +88,7 @@ const OrderScreen = ({ match, history }) => {
       paymentType.setOpaqueData(opaqueData)
   
       // var orderDetails = new ApiContracts.OrderType()
-      // orderDetails.setInvoiceNumber('1')
+      // orderDetails.setInvoiceNumber(orderId)
       // orderDetails.setDescription("Product Description")
   
       var tax = new ApiContracts.ExtendedAmountType()
