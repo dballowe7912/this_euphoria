@@ -1,29 +1,30 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Row, Col } from "react-bootstrap"
 import { Link } from "react-router-dom"
-import { listProducts, listProductsInCategory } from "../actions/productActions.js"
+import { listProducts } from "../actions/productActions.js"
 import Product from "../components/Product"
 import Loader from "../components/Loader"
 import Message from "../components/Message"
 import Paginate from "../components/Paginate.js"
-import axios from 'axios'
 
 const CollectionScreen = ({ match }) => {
   const keyword = match.params.keyword
 
   const dispatch = useDispatch()
   
-  const productList = useSelector((state) => state.productCategory)
+  const productList = useSelector((state) => state.productList)
   const { loading, error, products, page, pages } = productList
 
   useEffect(() => {
-    dispatch(listProductsInCategory())
+    dispatch(listProducts())
   }, [dispatch])
 
   const orderedProducts = products.filter((product, index) => {
     return product.category === match.params.id
   })
+
+  console.log(products, match.params.id)
     
   return (
     <>
@@ -43,11 +44,11 @@ const CollectionScreen = ({ match }) => {
               </Col>
             ))}
           </Row>
-          <Paginate
+          {/* <Paginate
             pages={pages}
             page={page}
             keyword={keyword ? keyword : ""}
-          />
+          /> */}
         </>
       )}
     </>
