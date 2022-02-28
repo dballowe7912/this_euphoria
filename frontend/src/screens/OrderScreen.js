@@ -337,12 +337,13 @@ const OrderScreen = ({ match, history }) => {
                     <ListGroup.Item key={index}>
                       <Row>
                         <Col md={1}>
+                          { item.image === '/' ? '' : 
                           <Image
                             src={item.image}
                             alt={item.name}
                             fluid
                             rounded
-                          />
+                          />}
                         </Col>
                         <Col>
                           <Link to={`/product/${item.product}`}>

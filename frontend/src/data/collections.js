@@ -35,6 +35,12 @@ const collections = [
     image: "/collectionImages/soaps.jpg",
     category: "soaps",
   },
+  {
+    _id: "crystals-and-stones",
+    name: "Crystals and Stones",
+    image: "/collectionImages/crystals-and-stones.jpg",
+    category: "crystals-and-stones",
+  },
 ]
 
 export default collections
