@@ -6,8 +6,7 @@ const Footer = () => {
   return (
     <footer>
       <Container>
-        <Row>
-          <Col md={3}></Col>
+        <Row style={{ alignItems: "center", justifyContent: "center" }}>
           <Col md={3} className="mx-3">
             <Row>
               <Link to="/">Home</Link>
@@ -26,24 +25,43 @@ const Footer = () => {
             </Row>
           </Col>
           <Col md={3} className="mx-3">
-            {/* <Row>
-              <Link to="/">Dry Herbs</Link>
+            <Row>
+              <Link to="/collection/herbs">Dry Herbs</Link>
             </Row>
             <Row>
-              <Link to="/">Bulk Teas</Link>
+              <Link to="/collection/teas">Bulk Teas</Link>
             </Row>
             <Row>
-              <Link to="/">Essential Oils</Link>
+              <Link to="/collection/oils">Essential Oils</Link>
             </Row>
             <Row>
-              <Link to="/">Handmade Soaps</Link>
+              <Link to="/collection/soaps">Handmade Soaps</Link>
             </Row>
             <Row>
-              <Link to="/">Jewelry</Link>
+              <Link to="/collection/jewelry">Jewelry</Link>
             </Row>
             <Row>
-              <Link to="/">Room and Body Sprays</Link>
-            </Row> */}
+              <Link to="/collection/crystals-and-stones">
+                Crystals and Stones
+              </Link>
+            </Row>
+            <Row>
+              <Link to="/collection/skateshop">
+                Skateboards and Accessories
+              </Link>
+            </Row>
+          </Col>
+          <Col md={3} className="mx-3">
+            <Row>
+              <Link to="https://www.instagram.com/euphoriabotanical/">
+                <i className="fab fa-instagram-square instagram-icon footer-icon"></i>
+              </Link>
+            </Row>
+            <Row>
+              <Link to="https://www.facebook.com/EUPHORIABOTANICALS/">
+                <i className="fab fa-facebook-square facebook-icon footer-icon"></i>
+              </Link>
+            </Row>
           </Col>
         </Row>
         <Row>
