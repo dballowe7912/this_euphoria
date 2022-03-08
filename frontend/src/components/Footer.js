@@ -6,8 +6,9 @@ const Footer = () => {
   return (
     <footer>
       <Container>
-        <Row style={{ alignItems: "center", justifyContent: "center" }}>
+        <Row style={{ justifyContent: "center" }}>
           <Col md={3} className="mx-3">
+            <Row className="h5">Jump to:</Row>
             <Row>
               <Link to="/">Home</Link>
             </Row>
@@ -25,6 +26,7 @@ const Footer = () => {
             </Row>
           </Col>
           <Col md={3} className="mx-3">
+            <Row className="h5">Collections:</Row>
             <Row>
               <Link to="/collection/herbs">Dry Herbs</Link>
             </Row>
@@ -52,12 +54,11 @@ const Footer = () => {
             </Row>
           </Col>
           <Col md={3} className="mx-3">
+            <Row className="h5">Follow Us:</Row>
             <Row>
               <Link to="https://www.instagram.com/euphoriabotanical/">
                 <i className="fab fa-instagram-square instagram-icon footer-icon"></i>
               </Link>
-            </Row>
-            <Row>
               <Link to="https://www.facebook.com/EUPHORIABOTANICALS/">
                 <i className="fab fa-facebook-square facebook-icon footer-icon"></i>
               </Link>
