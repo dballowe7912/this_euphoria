@@ -333,30 +333,34 @@ const OrderScreen = ({ match, history }) => {
               ) : (
                 <ListGroup variant="flush">
                   {order.orderItems.map((item, index) => {
-                  return (
-                    <ListGroup.Item key={index}>
-                      <Row>
-                        <Col md={1}>
-                          { item.image === '/' ? '' : 
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            fluid
-                            rounded
-                          />}
-                        </Col>
-                        <Col>
-                          <Link to={`/product/${item.product}`}>
-                            {item.name}
-                          </Link>
-                        </Col>
-                        <Col md={4}>
-                          {item.qty} x ${item.price.toFixed(2)} = ${(item.qty * item.price).toFixed(2)}
-                        </Col>
-                      </Row>
-                    </ListGroup.Item>
-                  )}
-                  )}
+                    return (
+                      <ListGroup.Item key={index}>
+                        <Row>
+                          <Col md={1}>
+                            {item.image === "/" ? (
+                              ""
+                            ) : (
+                              <Image
+                                src={item.image}
+                                alt={item.name}
+                                fluid
+                                rounded
+                              />
+                            )}
+                          </Col>
+                          <Col>
+                            <Link to={`/product/${item.product}`}>
+                              {item.name}
+                            </Link>
+                          </Col>
+                          <Col md={4}>
+                            {item.qty} x ${item.price.toFixed(2)} = $
+                            {(item.qty * item.price).toFixed(2)}
+                          </Col>
+                        </Row>
+                      </ListGroup.Item>
+                    )
+                  })}
                 </ListGroup>
               )}
             </ListGroup.Item>
@@ -395,7 +399,9 @@ const OrderScreen = ({ match, history }) => {
               {!order.isPaid && (
                 <ListGroup.Item>
                   {loadingPay && <Loader />}
+                  <p className="text-center bold">Call 903-983-0213 to Order</p>
                   <HostedForm
+                    disabled
                     buttonClassName="btn btn-block border"
                     authData={authData}
                     onSubmit={handleSubmit}
