@@ -135,7 +135,6 @@ const OrderScreen = ({ match, history }) => {
           var lineItem_id1 = new ApiContracts.LineItemType()
           lineItem_id1.setItemId(item._id)
           lineItem_id1.setName(item.name.slice(0, 30))
-          // lineItem_id1.setDescription("cannes logo")
           lineItem_id1.setQuantity(item.qty)
           lineItem_id1.setUnitPrice(item.price)
           lineItemList.push(lineItem_id1)
