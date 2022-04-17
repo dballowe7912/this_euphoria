@@ -24,6 +24,9 @@ const Footer = () => {
             <Row>
               <Link to="/privacy-policy">Privacy Policy</Link>
             </Row>
+            <Row>
+              <Link to="/shipping-details">Shipping and Returns</Link>
+            </Row>
           </Col>
           <Col md={3} className="mx-3">
             <Row className="h5">Collections:</Row>

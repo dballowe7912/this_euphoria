@@ -22,7 +22,8 @@ import CollectionScreen from './screens/CollectionScreen'
 import ContactScreen from './screens/ContactScreen'
 import AboutScreen from './screens/AboutScreen'
 import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen'
-import TermsAndConditionsScreen from './TermsAndConditionsScreen'
+import TermsAndConditionsScreen from './screens/TermsAndConditionsScreen'
+import ShippingDetailsScreen from './screens/ShippingDetailsScreen'
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
       <Header />
       <main className="py-3">
         <Container>
+          <Route path="/shipping-details" component={ShippingDetailsScreen} />
           <Route path="/terms-and-conditions" component={TermsAndConditionsScreen} />
           <Route path="/privacy-policy" component={PrivacyPolicyScreen} />
           <Route path="/about" component={AboutScreen} />

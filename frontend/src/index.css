@@ -20,6 +20,10 @@ h2 {
   margin: 0.1rem;
 }
 
+.email-or-phone-number {
+  font-weight: bolder;
+}
+
 /* carousel */
 /* .carousel-item-next,
 .carousel-item-prev,

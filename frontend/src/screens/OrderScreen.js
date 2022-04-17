@@ -76,6 +76,8 @@ const OrderScreen = ({ match, history }) => {
     dispatch(deliverOrder(order))
   }
 
+  console.log(orderId)
+
   const handleSubmit = (response) => {
     try {
       const merchantAuthenticationType =
@@ -99,20 +101,20 @@ const OrderScreen = ({ match, history }) => {
   
       // GET SHIPPING COST
       var shipping = new ApiContracts.ExtendedAmountType()
-      shipping.setAmount("10.00")
+      shipping.setAmount("12.00")
       shipping.setName("USPS")
       shipping.setDescription("Shipping flat rate")
   
       // GET BILL TO INFO FROM ORDER
-      var billTo = new ApiContracts.CustomerAddressType()
-      billTo.setFirstName(order.shippingAddress.firstName)
-      billTo.setLastName(order.shippingAddress.lastName)
-      billTo.setAddress(order.shippingAddress.address)
-      billTo.setCity(order.shippingAddress.city)
-      billTo.setState(order.shippingAddress.state)
-      billTo.setZip(order.shippingAddress.postalCode)
-      billTo.setCountry("USA")
-      billTo.setEmail(userInfo.email)
+      // var billTo = new ApiContracts.CustomerAddressType()
+      // billTo.setFirstName(order.shippingAddress.firstName)
+      // billTo.setLastName(order.shippingAddress.lastName)
+      // billTo.setAddress(order.shippingAddress.address)
+      // billTo.setCity(order.shippingAddress.city)
+      // billTo.setState(order.shippingAddress.state)
+      // billTo.setZip(order.shippingAddress.postalCode)
+      // billTo.setCountry("USA")
+      // billTo.setEmail(userInfo.email)
   
       // GET SHIPPING INFO
       var shipTo = new ApiContracts.CustomerAddressType()
@@ -154,7 +156,7 @@ const OrderScreen = ({ match, history }) => {
       // transactionRequestType.setOrder(orderDetails);
       transactionRequestType.setTax(tax)
       transactionRequestType.setShipping(shipping)
-      transactionRequestType.setBillTo(billTo)
+      // transactionRequestType.setBillTo(billTo)
       transactionRequestType.setShipTo(shipTo)
       // transactionRequestType.setTransactionSettings(transactionSettings);
   
@@ -401,7 +403,6 @@ const OrderScreen = ({ match, history }) => {
                   {loadingPay && <Loader />}
                   <p className="text-center bold">Call 903-983-0213 to Order</p>
                   <HostedForm
-                    disabled
                     buttonClassName="btn btn-block border"
                     authData={authData}
                     onSubmit={handleSubmit}

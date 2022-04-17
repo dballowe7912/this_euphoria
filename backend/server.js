@@ -28,13 +28,13 @@ app.use('/api/users', userRoutes)
 app.use('/api/orders', orderRoutes)
 app.use('/api/upload', uploadRoutes)
 
-// app.get("/api/config/capture", (req, res) => {
-//   res.send({
-//     apiLoginID: process.env.AUTHORIZE_API_LOGIN_ID,
-//     clientKey: process.env.AUTHORIZE_API_CLIENT_KEY,
-//     transactionKey: process.env.AUTHORIZE_TRANSACTION_KEY,
-//   })
-// })
+app.post('/api/authorize', (req, res) => {
+  res.send({
+    apiLoginID: process.env.AUTHORIZE_API_LOGIN_ID,
+    clientKey: process.env.AUTHORIZE_API_CLIENT_KEY,
+    transactionKey: process.env.AUTHORIZE_TRANSACTION_KEY,
+  })
+})
 
 const __dirname = path.resolve()
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')))

@@ -45,19 +45,6 @@ function TermsAndConditionsScreen() {
         receiving. If either condition is met, item will be replaced, or a
         refund will be issued.
       </p>
-      <h1>Shipping</h1>
-      <p className="shipping">
-        Shipping rates carry a flat fee of $10. For oversized items such as
-        skateboards or bulk orders can carry a fee of $20. Orders that are
-        shipped out of county will vary, so an estimate will need to be
-        arranged. For more information email{" "}
-        <span>
-          <a href="mailto:support@euphoriabotanical.com">
-            support@euphoriabotanical.com
-          </a>
-        </span>
-        .
-      </p>
     </div>
   )
 }
