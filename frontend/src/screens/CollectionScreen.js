@@ -29,6 +29,7 @@ const CollectionScreen = ({ match }) => {
       <Link to="/" className="btn btn-dark mb-3">
         Go Back
       </Link>
+      
       {loading ? (
         <Loader />
       ) : error ? (

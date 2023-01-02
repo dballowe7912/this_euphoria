@@ -12,9 +12,10 @@ const Meta = ({ title, description, keywords }) => {
 }
 
 Meta.defaultProps = {
-  title: 'Euphoria Botanical',
-  description: 'Here for all your botanical needs',
-  keywords: 'herbs, teas, jewelry, body sprays, room sprays, essential oils, oils, incense, gems, crystals, stones',
+  title: "Euphoria Botanical",
+  description: "Here for all your botanical needs",
+  keywords:
+    "herbs, teas, jewelry, body sprays, room sprays, essential oils, oils, incense, gems, crystals, stones, skateboard, skateboards"
 }
 
 export default Meta

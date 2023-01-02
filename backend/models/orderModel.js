@@ -46,12 +46,12 @@ const orderSchema = mongoose.Schema(
     shippingPrice: {
       type: Number,
       required: true,
-      default: 10.00,
+      default: 12.00,
     },
     totalPrice: {
       type: Number,
       required: true,
-      default: 0.0,
+      default: 0.00,
     },
     isPaid: {
       type: Boolean,

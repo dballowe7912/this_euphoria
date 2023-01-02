@@ -62,18 +62,6 @@ const OrderScreen = ({ match, history }) => {
     if (!userInfo) {
       history.push("/login")
     }
-
-    // const addAuthorizeScript = async () => {
-    //   const { data: authData } = await axios.get('/api/capture')
-    //   const script = document.createElement('script')
-    //   script.type = 'text/javascript'
-    //   script.src = "https://jstest.authorize.net/v1/Accept.js"
-    //   script.async = true
-    //   script.onload = () => {
-    //     setSdkReady(true)
-    //   }
-    //   document.body.appendChild(script)
-    // } 
     
     if (!order || successPay || successDeliver || order._id !== orderId) {
       dispatch({ type: ORDER_PAY_RESET })
@@ -105,18 +93,10 @@ const OrderScreen = ({ match, history }) => {
     dispatch(deliverOrder(order))
   }
 
-  const handleSubmit = (response) => {
-    axios.post('/api/capture', (req, res) => {
-      console.log(response)
-    })
-    // try {
-    
-  
-    //     successPaymentHandler(response)
-    //   })
-    // } catch (error) {
-    //   console.log(error)
-    // }
+  console.log(orderId)
+
+  const handleSubmit = (e) => {
+    console.log(e);
   }
 
   return loading ? (
@@ -179,29 +159,34 @@ const OrderScreen = ({ match, history }) => {
               ) : (
                 <ListGroup variant="flush">
                   {order.orderItems.map((item, index) => {
-                  return (
-                    <ListGroup.Item key={index}>
-                      <Row>
-                        <Col md={1}>
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            fluid
-                            rounded
-                          />
-                        </Col>
-                        <Col>
-                          <Link to={`/product/${item.product}`}>
-                            {item.name}
-                          </Link>
-                        </Col>
-                        <Col md={4}>
-                          {item.qty} x ${item.price.toFixed(2)} = ${(item.qty * item.price).toFixed(2)}
-                        </Col>
-                      </Row>
-                    </ListGroup.Item>
-                  )}
-                  )}
+                    return (
+                      <ListGroup.Item key={index}>
+                        <Row>
+                          <Col md={1}>
+                            {item.image === "/" ? (
+                              ""
+                            ) : (
+                              <Image
+                                src={item.image}
+                                alt={item.name}
+                                fluid
+                                rounded
+                              />
+                            )}
+                          </Col>
+                          <Col>
+                            <Link to={`/product/${item.product}`}>
+                              {item.name}
+                            </Link>
+                          </Col>
+                          <Col md={4}>
+                            {item.qty} x ${item.price.toFixed(2)} = $
+                            {(item.qty * item.price).toFixed(2)}
+                          </Col>
+                        </Row>
+                      </ListGroup.Item>
+                    )
+                  })}
                 </ListGroup>
               )}
             </ListGroup.Item>
@@ -240,6 +225,7 @@ const OrderScreen = ({ match, history }) => {
               {!order.isPaid && (
                 <ListGroup.Item>
                   {loadingPay && <Loader />}
+                  <p className="text-center bold">Call 903-983-0213 to Order</p>
                   <HostedForm
                     buttonClassName="btn btn-block border"
                     authData={authData}
