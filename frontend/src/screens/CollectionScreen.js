@@ -23,8 +23,6 @@ const CollectionScreen = ({ match }) => {
   const orderedProducts = products.filter((product, index) => {
     return product.category === match.params.id
   })
-
-  console.log(products, match.params.id)
     
   return (
     <>
